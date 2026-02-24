@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Мої роботи — PresentationLab</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/settings-panel.css">
+  <link rel="stylesheet" href="css/mobile.css">
+  <style>
+    /* ── page layout ── */
+    .works-hero { padding: 110px 0 56px; text-align: center; }
+    .works-hero h1 { font-size: clamp(38px,6vw,64px); font-weight: 900; color:#fff; margin: 10px 0 14px; }
+    .works-hero h1 span {
+      background: linear-gradient(135deg,#6c63ff,#00c9a7);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .works-hero p { font-size: 17px; color: rgba(255,255,255,.55); max-width: 520px; margin: 0 auto 24px; }
+    .works-chips { display:flex; gap:10px; flex-wrap:wrap; justify-content:center; }
+    .works-chip {
+      display:inline-flex; align-items:center; gap:7px;
+      padding:7px 16px; border-radius:50px;
+      background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.1);
+      font-size:13px; color: rgba(255,255,255,.6);
+    }
+    .chip-dot { width:7px; height:7px; border-radius:50%; }
+
+    /* ── summary row ── */
+    .works-summary {
+      display: grid; grid-template-columns: repeat(3,1fr); gap:16px;
+      max-width: 860px; margin: 0 auto 48px;
+    }
+    .ws-box {
+      padding: 22px 20px; border-radius:18px;
+      background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.07);
+      display:flex; align-items:center; gap:14px;
+      transition: border-color .3s, transform .3s;
+    }
+    .ws-box:hover { border-color: rgba(108,99,255,.35); transform: translateY(-4px); }
+    .ws-emo { font-size: 30px; }
+    .ws-num { font-size: 30px; font-weight:800; color:#fff; line-height:1; }
+    .ws-lbl { font-size:12px; color:rgba(255,255,255,.45); margin-top:2px; }
+
+    /* ── filter tabs ── */
+    .filter-row { display:flex; gap:8px; flex-wrap:wrap; justify-content:center; margin-bottom:40px; }
+    .ftab {
+      padding:8px 20px; border-radius:50px;
+      border:1px solid rgba(255,255,255,.12); background: rgba(255,255,255,.04);
+      color:rgba(255,255,255,.6); font-size:13px; font-weight:600; cursor:pointer;
+      transition: all .25s;
+    }
+    .ftab:hover { background:rgba(108,99,255,.12); border-color:rgba(108,99,255,.3); color:#fff; }
+    .ftab.active {
+      background: linear-gradient(135deg,#6c63ff,#4ecdc4);
+      border-color:transparent; color:#fff;
+      box-shadow: 0 4px 16px rgba(108,99,255,.35);
+    }
+
+    /* ── work cards grid ── */
+    .works-list { display:flex; flex-direction:column; gap:28px; max-width:960px; margin:0 auto; }
+
+    /* ── single work card ── */
+    .wcard {
+      background: rgba(14,14,28,.75);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 22px; overflow: hidden;
+      backdrop-filter: blur(14px);
+      transition: border-color .3s, box-shadow .3s, transform .3s;
+    }
+    .wcard:hover {
+      border-color: rgba(108,99,255,.4);
+      box-shadow: 0 16px 56px rgba(108,99,255,.14);
+      transform: translateY(-4px);
+    }
+
+    /* header row */
+    .wcard-head {
+      padding: 22px 26px 18px;
+      display: flex; align-items: center; gap: 14px;
+      border-bottom: 1px solid rgba(255,255,255,.06);
+    }
+    .wcard-icon {
+      width: 50px; height: 50px; border-radius: 14px;
+      display:flex; align-items:center; justify-content:center;
+      font-size: 24px; flex-shrink:0;
+    }
+    .wcard-info { flex:1; }
+    .wcard-info h3 { font-size:18px; font-weight:700; color:#fff; margin:0 0 3px; }
+    .wcard-info p  { font-size:13px; color:rgba(255,255,255,.5); margin:0; }
+    .wcard-badge {
+      font-size:10px; font-weight:700;
+      padding:4px 12px; border-radius:50px; text-transform:uppercase; letter-spacing:.06em;
+      white-space:nowrap;
+    }
+    .badge-video   { background:rgba(255,0,0,.12);     border:1px solid rgba(255,0,0,.3);     color:#ff7070; }
+    .badge-pdf     { background:rgba(231,76,60,.12);   border:1px solid rgba(231,76,60,.3);   color:#e87461; }
+    .badge-design  { background:rgba(108,99,255,.14);  border:1px solid rgba(108,99,255,.3);  color:#9d96ff; }
+
+    /* body */
+    .wcard-body { padding: 0 26px 22px; }
+
+    /* youtube */
+    .yt-wrap {
+      position:relative; border-radius:14px; overflow:hidden;
+      aspect-ratio:16/9; background:#000; margin:20px 0 16px;
+      border:1px solid rgba(255,255,255,.06);
+    }
+    .yt-wrap iframe { position:absolute; inset:0; width:100%; height:100%; border:none; }
+
+    /* pdf */
+    .pdf-wrap {
+      border-radius:14px; overflow:hidden;
+      background:#000; margin:20px 0 16px;
+      border:1px solid rgba(255,255,255,.06);
+      transition: height .4s ease;
+    }
+    .pdf-wrap iframe { width:100%; height:520px; border:none; display:block; }
+    .pdf-wrap.collapsed { display:none; }
+
+    /* actions */
+    .wcard-actions { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+    .wbtn {
+      display:inline-flex; align-items:center; gap:7px;
+      padding:9px 20px; border-radius:11px;
+      border:1px solid rgba(108,99,255,.3); background:rgba(108,99,255,.1);
+      color:#a09bff; font-size:13px; font-weight:600;
+      text-decoration:none; cursor:pointer;
+      transition: all .25s;
+    }
+    .wbtn:hover { background:rgba(108,99,255,.22); border-color:rgba(108,99,255,.6); color:#fff; transform:translateX(3px); }
+    .wbtn.yt { border-color:rgba(255,0,0,.3); background:rgba(255,0,0,.08); color:#ff7070; }
+    .wbtn.yt:hover { background:rgba(255,0,0,.2); border-color:rgba(255,0,0,.6); color:#fff; }
+    .wbtn.collapse-btn { border-color:rgba(255,255,255,.1); background:rgba(255,255,255,.04); color:rgba(255,255,255,.5); }
+    .wbtn.collapse-btn:hover { background:rgba(255,255,255,.08); color:#fff; transform:none; }
+    .wcard-note { margin-left:auto; font-size:12px; color:rgba(255,255,255,.2); }
+
+    @media(max-width:768px){
+      .works-summary { grid-template-columns:1fr; }
+      .wcard-head { flex-wrap:wrap; gap:8px; padding:18px; }
+      .wcard-body { padding:0 18px 18px; }
+      .pdf-wrap iframe { height:300px; }
+    }
+  </style>
+</head>
+<body class="is-loading">
+  <div class="bg-grid"></div>
+  <div class="glow-orb orb-1"></div>
+  <div class="glow-orb orb-2"></div>
+
+  <header class="header">
+    <div class="container">
+      <nav class="navbar">
+        <a class="brand" href="index.html">
+          <span class="brand-badge"></span>
+          <div><span>PresentationLab</span><small></small></div>
+        </a>
+        <button class="burger-icon" aria-label="Меню"><span></span><span></span><span></span></button>
+        <div class="nav-links">
+          <a href="index.html">Головна</a>
+          <a href="power-point.html">PowerPoint</a>
+          <a href="google-slides.html">Google Slides</a>
+          <a href="canva.html">Canva</a>
+          <a href="prezi.html">Prezi</a>
+          <a href="compare.html">Порівняння</a>
+          <a class="active" href="works.html">Мої роботи</a>
+          <a href="about-me.html">Про мене</a>
+        </div>
+        <nav class="mobile-nav">
+          <a href="index.html">Головна</a>
+          <a href="power-point.html">PowerPoint</a>
+          <a href="google-slides.html">Google Slides</a>
+          <a href="canva.html">Canva</a>
+          <a href="prezi.html">Prezi</a>
+          <a href="compare.html">Порівняння</a>
+          <a class="active" href="works.html">Мої роботи</a>
+          <a href="about-me.html">Про мене</a>
+        </nav>
+      </nav>
+      <div class="overlay"></div>
+    </div>
+  </header>
+
+  <main>
+    <!-- ── HERO ── -->
+    <section class="works-hero">
+      <div class="container">
+        <span class="pill reveal"><span class="dot"></span> Портфоліо</span>
+        <h1 class="reveal">Мої <span>роботи</span></h1>
+        <p class="reveal">Навчальні та дизайнерські проєкти у форматі PDF та відео — зроблені в рамках атестаційної роботи</p>
+        <div class="works-chips reveal">
+          <span class="works-chip"><span class="chip-dot" style="background:#ff7070"></span><b>1</b>&nbsp;відео</span>
+          <span class="works-chip"><span class="chip-dot" style="background:#6c63ff"></span><b>5</b>&nbsp;PDF документів</span>
+          <span class="works-chip"><span class="chip-dot" style="background:#00c9a7"></span><b>6</b>&nbsp;робіт загалом</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── SUMMARY BOXES ── -->
+    <section class="section" style="padding-top:0">
+      <div class="container">
+        <div class="works-summary">
+          <div class="ws-box work-item">
+            <span class="ws-emo">🎥</span>
+            <div><div class="ws-num">1</div><div class="ws-lbl">YouTube відео</div></div>
+          </div>
+          <div class="ws-box work-item">
+            <span class="ws-emo">📄</span>
+            <div><div class="ws-num">5</div><div class="ws-lbl">PDF документи</div></div>
+          </div>
+          <div class="ws-box work-item">
+            <span class="ws-emo">🎓</span>
+            <div><div class="ws-num">2026</div><div class="ws-lbl">Рік виконання</div></div>
+          </div>
+        </div>
+
+        <!-- ── FILTER ── -->
+        <div class="filter-row reveal">
+          <button class="ftab active" data-f="all">Всі роботи</button>
+          <button class="ftab" data-f="video">🎥 Відео</button>
+          <button class="ftab" data-f="pdf">📄 PDF</button>
+          <button class="ftab" data-f="design">🎨 Дизайн</button>
+        </div>
+
+        <!-- ── WORKS ── -->
+        <div class="works-list" id="wlist">
+
+          <!-- 1. YouTube -->
+          <div class="wcard work-item" data-cat="video">
+            <div class="wcard-head">
+              <div class="wcard-icon" style="background:rgba(255,0,0,.1);border:1px solid rgba(255,0,0,.2)">🎬</div>
+              <div class="wcard-info">
+                <h3>YouTube відео</h3>
+                <p>Відеоматеріал, розміщений на YouTube</p>
+              </div>
+              <span class="wcard-badge badge-video">Відео</span>
+            </div>
+            <div class="wcard-body">
+              <div class="yt-wrap">
+                <iframe src="https://www.youtube.com/embed/VfzUSn_VwzE"
+                  title="YouTube відео"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowfullscreen loading="lazy"></iframe>
+              </div>
+              <div class="wcard-actions">
+                <a class="wbtn yt" href="https://youtu.be/VfzUSn_VwzE" target="_blank" rel="noopener">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+                  Відкрити на YouTube
+                </a>
+                <span class="wcard-note">youtube.com</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. Інфографіка -->
+          <div class="wcard work-item" data-cat="pdf design">
+            <div class="wcard-head">
+              <div class="wcard-icon" style="background:rgba(108,99,255,.12);border:1px solid rgba(108,99,255,.22)">📊</div>
+              <div class="wcard-info">
+                <h3>Інфографіка</h3>
+                <p>Візуалізація даних та статистики у зрозумілому форматі</p>
+              </div>
+              <span class="wcard-badge badge-design">Дизайн</span>
+            </div>
+            <div class="wcard-body">
+              <div class="pdf-wrap" id="pw1">
+                <iframe src="assets/pdf/infografika.pdf" loading="lazy" title="Інфографіка"></iframe>
+              </div>
+              <div class="wcard-actions">
+                <a class="wbtn" href="assets/pdf/infografika.pdf" target="_blank">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                  Відкрити PDF
+                </a>
+                <button class="wbtn collapse-btn" onclick="togglePdf('pw1',this)">↑ Згорнути</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3. Бюлетень -->
+          <div class="wcard work-item" data-cat="pdf">
+            <div class="wcard-head">
+              <div class="wcard-icon" style="background:rgba(0,201,167,.1);border:1px solid rgba(0,201,167,.22)">📰</div>
+              <div class="wcard-info">
+                <h3>Бюлетень</h3>
+                <p>Інформаційний бюлетень з новинами та оновленнями</p>
+              </div>
+              <span class="wcard-badge badge-pdf">PDF</span>
+            </div>
+            <div class="wcard-body">
+              <div class="pdf-wrap" id="pw2">
+                <iframe src="assets/pdf/bulletin.pdf" loading="lazy" title="Бюлетень"></iframe>
+              </div>
+              <div class="wcard-actions">
+                <a class="wbtn" href="assets/pdf/bulletin.pdf" target="_blank">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                  Відкрити PDF
+                </a>
+                <button class="wbtn collapse-btn" onclick="togglePdf('pw2',this)">↑ Згорнути</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4. Business Brochure -->
+          <div class="wcard work-item" data-cat="pdf design">
+            <div class="wcard-head">
+              <div class="wcard-icon" style="background:rgba(247,183,49,.1);border:1px solid rgba(247,183,49,.22)">💼</div>
+              <div class="wcard-info">
+                <h3>Business Agency Brochure</h3>
+                <p>Професійна брошура для бізнес-агентства</p>
+              </div>
+              <span class="wcard-badge badge-design">Дизайн</span>
+            </div>
+            <div class="wcard-body">
+              <div class="pdf-wrap" id="pw3">
+                <iframe src="assets/pdf/business-brochure.pdf" loading="lazy" title="Business Brochure"></iframe>
+              </div>
+              <div class="wcard-actions">
+                <a class="wbtn" href="assets/pdf/business-brochure.pdf" target="_blank">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                  Відкрити PDF
+                </a>
+                <button class="wbtn collapse-btn" onclick="togglePdf('pw3',this)">↑ Згорнути</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 5. English Tips -->
+          <div class="wcard work-item" data-cat="pdf design">
+            <div class="wcard-head">
+              <div class="wcard-icon" style="background:rgba(52,152,219,.1);border:1px solid rgba(52,152,219,.22)">🗣️</div>
+              <div class="wcard-info">
+                <h3>English Tips Infographic</h3>
+                <p>Інфографіка з порадами для вивчення англійської мови</p>
+              </div>
+              <span class="wcard-badge badge-design">Дизайн</span>
+            </div>
+            <div class="wcard-body">
+              <div class="pdf-wrap" id="pw4">
+                <iframe src="assets/pdf/english-tips.pdf" loading="lazy" title="English Tips"></iframe>
+              </div>
+              <div class="wcard-actions">
+                <a class="wbtn" href="assets/pdf/english-tips.pdf" target="_blank">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                  Відкрити PDF
+                </a>
+                <button class="wbtn collapse-btn" onclick="togglePdf('pw4',this)">↑ Згорнути</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 6. Presentation Software -->
+          <div class="wcard work-item" data-cat="pdf">
+            <div class="wcard-head">
+              <div class="wcard-icon" style="background:rgba(108,99,255,.12);border:1px solid rgba(108,99,255,.22)">💻</div>
+              <div class="wcard-info">
+                <h3>ПЗ для створення презентацій</h3>
+                <p>Огляд програмного забезпечення для презентацій</p>
+              </div>
+              <span class="wcard-badge badge-pdf">PDF</span>
+            </div>
+            <div class="wcard-body">
+              <div class="pdf-wrap" id="pw5">
+                <iframe src="assets/pdf/presentation-software.pdf" loading="lazy" title="ПЗ для презентацій"></iframe>
+              </div>
+              <div class="wcard-actions">
+                <a class="wbtn" href="assets/pdf/presentation-software.pdf" target="_blank">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                  Відкрити PDF
+                </a>
+                <button class="wbtn collapse-btn" onclick="togglePdf('pw5',this)">↑ Згорнути</button>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /works-list -->
+
+        <div style="text-align:center;margin-top:56px">
+          <a href="index.html" class="btn primary reveal">← Повернутися на головну</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ── FOOTER ── -->
+  <footer class="footer-extended">
+    <div class="footer-container">
+      <div class="footer-top">
+        <div class="footer-contact-box">
+          <div class="footer-icon-wrapper location-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+          <h3>Адреса</h3><p>Україна, м. Рівне<br>ВПУ №1</p>
+        </div>
+        <div class="footer-contact-box">
+          <div class="footer-icon-wrapper phone-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18" stroke-width="3" stroke-linecap="round"/></svg></div>
+          <h3>Телефон</h3><p><a href="tel:+380335316031">(033) 531-60-31</a><br><a href="tel:+380935316031">(093) 531-60-31</a></p>
+        </div>
+        <div class="footer-contact-box">
+          <div class="footer-icon-wrapper email-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
+          <h3>Email</h3><p><a href="mailto:jungarikbigi@gmail.com">jungarikbigi@gmail.com</a></p>
+        </div>
+      </div>
+      <div class="footer-divider"></div>
+      <div class="footer-middle">
+        <div class="footer-column">
+          <h4><span class="col-dot" style="background:#6c63ff;box-shadow:0 0 8px #6c63ff"></span>Програми</h4>
+          <ul>
+            <li><a href="power-point.html"><span class="link-arrow">→</span>Microsoft PowerPoint</a></li>
+            <li><a href="google-slides.html"><span class="link-arrow">→</span>Google Slides</a></li>
+            <li><a href="canva.html"><span class="link-arrow">→</span>Canva Online</a></li>
+            <li><a href="prezi.html"><span class="link-arrow">→</span>Prezi Presentation</a></li>
+          </ul>
+        </div>
+        <div class="footer-column">
+          <h4><span class="col-dot" style="background:#00c9a7;box-shadow:0 0 8px #00c9a7"></span>Корисне</h4>
+          <ul>
+            <li><a href="compare.html"><span class="link-arrow">→</span>Порівняння програм</a></li>
+            <li><a href="works.html"><span class="link-arrow">→</span>Приклади презентацій</a></li>
+            <li><a href="index.html#tips"><span class="link-arrow">→</span>Поради з дизайну</a></li>
+            <li><a href="index.html#software"><span class="link-arrow">→</span>Огляд інструментів</a></li>
+          </ul>
+        </div>
+        <div class="footer-column">
+          <h4><span class="col-dot" style="background:#f7b731;box-shadow:0 0 8px #f7b731"></span>Інформація</h4>
+          <ul>
+            <li><a href="about-me.html"><span class="link-arrow">→</span>Про автора</a></li>
+            <li><a href="index.html"><span class="link-arrow">→</span>Головна сторінка</a></li>
+            <li><a href="index.html#compare"><span class="link-arrow">→</span>Можливості</a></li>
+            <li><a href="works.html"><span class="link-arrow">→</span>Портфоліо робіт</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div class="footer-socials">
+          <a href="viber://chat?number=%2B380935316031" class="f-social-btn f-viber"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M11.4 0C9.473.028 5.333.344 3.02 2.467 1.302 4.187.696 6.7.633 9.817.57 12.933.488 18.776 6.12 20.36h.003l-.004 2.644s-.037.977.61 1.176c.777.242 1.234-.5 1.98-1.302.407-.44.972-1.084 1.397-1.58 3.85.323 6.812-.417 7.15-.525.776-.252 5.176-.816 5.892-6.657.74-6.02-.36-9.83-2.34-11.546l-.01-.007C19.22-.5 14.607.012 11.4 0zm.504 1.93c2.91 0 6.81.43 8.293 1.894 1.66 1.573 2.582 4.806 1.948 10.062-.633 5.24-4.427 5.594-5.108 5.815-.292.095-2.986.768-6.4.488 0 0-2.53 3.063-3.32 3.853-.12.12-.26.167-.352.145-.13-.03-.166-.188-.165-.414l.02-4.444c-4.917-1.4-4.61-6.5-4.552-9.17.053-2.67.573-4.78 1.99-6.312C6.04 2.21 9.486 1.93 11.904 1.93z"/></svg><span>Viber</span></a>
+          <a href="https://t.me/AloneBigl" target="_blank" class="f-social-btn f-telegram"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 00-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .38z"/></svg><span>Telegram</span></a>
+          <a href="https://wa.me/380935316031" target="_blank" class="f-social-btn f-whatsapp"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg><span>WhatsApp</span></a>
+        </div>
+        <div class="footer-copyright"><p>© 2026 PresentationLab &bull; ВПУ №1 м. Рівне</p></div>
+        <button onclick="window.scrollTo({top:0,behavior:'smooth'})" class="scroll-top-btn" aria-label="Вгору">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 15l-6-6-6 6"/></svg>
+        </button>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Loader -->
+  <div class="page-loader">
+    <div class="loader-content">
+      <div class="loader-spinner"><div class="ring"></div><div class="ring"></div><div class="loader-core"></div></div>
+      <div class="loader-particles"><span></span><span></span><span></span><span></span></div>
+      <div class="loader-text">Loading</div>
+    </div>
+  </div>
+
+  <script src="js/script.js"></script>
+  <script src="js/scroll-animations.js"></script>
+  <script src="js/settings-panel.js"></script>
+  <script>
+  /* ── filter tabs ── */
+  document.querySelectorAll('.ftab').forEach(function(tab) {
+    tab.addEventListener('click', function() {
+      document.querySelectorAll('.ftab').forEach(function(t){ t.classList.remove('active'); });
+      tab.classList.add('active');
+      var f = tab.dataset.f;
+      var delay = 0;
+      document.querySelectorAll('#wlist .wcard').forEach(function(c) {
+        var cats = c.dataset.cat || '';
+        var show = (f === 'all' || cats.includes(f));
+        if (show) {
+          c.style.display = '';
+          c.style.opacity = '0';
+          c.style.transform = 'translateY(14px)';
+          var d = delay;
+          setTimeout(function() {
+            c.style.transition = 'opacity .4s ease, transform .4s ease';
+            c.style.opacity = '1';
+            c.style.transform = 'none';
+          }, d);
+          delay += 60;
+        } else {
+          c.style.display = 'none';
+        }
+      });
+    });
+  });
+
+  /* ── toggle PDF collapse ── */
+  function togglePdf(id, btn) {
+    var wrap = document.getElementById(id);
+    var collapsed = wrap.classList.toggle('collapsed');
+    btn.textContent = collapsed ? '↓ Розгорнути' : '↑ Згорнути';
+  }
+  </script>
+</body>
+</html>
